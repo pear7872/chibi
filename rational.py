@@ -8,6 +8,7 @@ class Q(object):
         if self.b == 1:
             return str(self.a)
         return f'{self.a}/{self.b}'
+        gcd = math.gcd(a,b)
     def __add__(self, q):
         a = self.a
         b = self.b
