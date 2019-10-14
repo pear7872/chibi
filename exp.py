@@ -1,5 +1,8 @@
 
-class Val(object):
+class Expr(object):
+    pass
+
+class Val(Expr):
     __slots__ = ['value']
     def __init__(self, v = 0):
         self.value = v
