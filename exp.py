@@ -11,10 +11,15 @@ class Val(Expr):
     def eval(self):
         return self.value
     
-e = Val(1)
-e.eval()
+v = Val(1)
+print(v)
+assert v.eval() == 1
 
-class Add(object):
+assert isinstance(v, Expr)
+assert isinstance(v, Val)
+assert not isinstance(v, int)
+
+class Add(Expr):
     __slots__=['left', 'right']
     def __init__(self, a, b):
         self.left = a
@@ -24,7 +29,13 @@ class Add(object):
 
 e = Add(Val(1), Val(2))
 assert e.eval() == 3
-print(e.eval())
+
+e = Add(1,2)
+assert e.eval() == 3
+
 e = Add(Val(1),Add(Val(2),Val(3)))
 assert e.eval() == 6
-print(e.eval())
+
+print()
+print()
+print()
