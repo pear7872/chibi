@@ -32,7 +32,7 @@ class Binary(Expr):
     def eval(self):
         return self.binary
 
-class Add(Expr):
+class Add(Binary):
     __slots__=['left', 'right']
     def __init__(self, a, b):
         if not isinstance(a, Expr):
