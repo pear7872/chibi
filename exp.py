@@ -24,6 +24,14 @@ def toExpr(x):
         a = Val(a)
     return a
 
+class Binary(Expr):
+    __slots__=['binary']
+    def __repr__(self):
+        classname = self.__class__.__name__
+        return f'{classname}({self.left},{self.right})'
+    def eval(self):
+        return self.binary
+
 class Add(Expr):
     __slots__=['left', 'right']
     def __init__(self, a, b):
