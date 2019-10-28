@@ -1,3 +1,10 @@
 from exp import Val, Add
 
-print(Val(1))
+def parse(s: str):
+    num = int(s)
+    return Val(num)
+
+e = parse("123")
+print(e)
+
+
