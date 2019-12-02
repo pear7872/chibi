@@ -5,7 +5,27 @@ Product = Value (^{ '*' Value #Mul })*
 Value = { [0-9]+ #Int }
 ''')
 parser = pegpy.generate(peg)
-t = parser('1+2*3')
-print(repr(t))
-t = parser('@2')
-print(repr(t))
+#t = parser('1+2*3')
+#print(repr(t))
+
+def calc(t):
+    if t == 'Int':
+        return int(str(t))
+    if t == 'And':
+        return calc(t[0]) + calc(t[1])
+    if t == 'Mul':
+        return calc(t[0]) * calc(t[1])
+    print(f'TODO{t.tag}')
+    return 0
+
+#t = parser('1+2*3+4*5')
+#print(repr(t))
+#print(calc(t))
+
+def main():
+    s = input('$ ')
+    t = parser(s)
+    print(calc(t))
+
+    if __name__ == '__main__':
+        main()
