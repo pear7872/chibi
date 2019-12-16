@@ -44,47 +44,38 @@ class Mul(Binary):
     __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) * self.right.eval(env)
-
 class Div(Binary):
     __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) // self.right.eval(env)
-
 class Mod(Binary):
     __slots__ = ['left', 'right']
     def eval(self, env: dict):
         return self.left.eval(env) % self.right.eval(env)
-
-class Eq(Binary):
+class Eq(Binary): # left == right
     __slots__ = ['left', 'right']
-    def eval(self, env: dict):
+    def eval(self, env: dict):   # cond ? x : y
         return 1 if self.left.eval(env) == self.right.eval(env) else 0
-
-class Ne(Binary):
+class Ne(Binary): # left != right
     __slots__ = ['left', 'right']
-    def eval(self, env: dict):
+    def eval(self, env: dict):   # cond ? x : y
         return 1 if self.left.eval(env) != self.right.eval(env) else 0
-
-class Lt(Binary):
+class Lt(Binary): # left != right
     __slots__ = ['left', 'right']
-    def eval(self, env: dict):
+    def eval(self, env: dict):   # cond ? x : y
         return 1 if self.left.eval(env) < self.right.eval(env) else 0
-
-class Lte(Binary):
+class Lte(Binary): # left != right
     __slots__ = ['left', 'right']
-    def eval(self, env: dict):
+    def eval(self, env: dict):   # cond ? x : y
         return 1 if self.left.eval(env) <= self.right.eval(env) else 0
-
-class Gt(Binary):
+class Gt(Binary): # left != right
     __slots__ = ['left', 'right']
-    def eval(self, env: dict):
+    def eval(self, env: dict):   # cond ? x : y
         return 1 if self.left.eval(env) > self.right.eval(env) else 0
-
-class Gte(Binary):
+class Gte(Binary): # left != right
     __slots__ = ['left', 'right']
-    def eval(self, env: dict):
+    def eval(self, env: dict):   # cond ? x : y
         return 1 if self.left.eval(env) >= self.right.eval(env) else 0
-
 class Var(Expr):
     __slots__ = ['name']
     def __init__(self, name):
@@ -95,7 +86,6 @@ class Var(Expr):
         if self.name in env:
             return env[self.name]
         raise NameError(self.name)
-
 class Assign(Expr):
     __slots__ = ['name', 'e']
     def __init__(self, name, e):
@@ -104,15 +94,13 @@ class Assign(Expr):
     def eval(self, env):
         env[self.name] = self.e.eval(env)
         return env[self.name]
-
 class Block(Expr):
     __slots__ = ['exprs']
-    def __init__(self, *exprs):
-        self.exprs = exprs
+    def __init__(self, *exprs): # 可変長個の引数
+        self.exprs = exprs  # [e, e2, e3, e4, e5] リストになっている
     def eval(self, env):
         for e in self.exprs:
             e.eval(env)
-
 class While(Expr):
     __slots__ = ['cond', 'body']
     def __init__(self, cond, body):
@@ -120,8 +108,7 @@ class While(Expr):
         self.body = body
     def eval(self, env):
         while self.cond.eval(env) != 0:
-            self.body.eval(env)    
-   
+            self.body.eval(env)
 class If(Expr):
     __slots__ = ['cond', 'then', 'else_']
     def __init__(self, cond, then, else_ ):
@@ -134,7 +121,6 @@ class If(Expr):
             return self.then.eval(env)
         else:
             return self.else_.eval(env)
-
 class Lambda(Expr):
     __slots__ = ['name', 'body']
     def __init__(self, name, body):
@@ -144,16 +130,11 @@ class Lambda(Expr):
         return f'λ{self.name} . {str(self.body)}'
     def eval(self, env):
         return self
-'''
-f = Lambda('x', Add(Var('x'), 1))
-print(repr(f))
-'''
-def copy(env):
+def copy(env): #環境をコピーすることでローカルスコープを作る
     newenv = {}
     for x in env.keys():
         newenv[x] = env[x]
     return newenv
-
 class FuncApp(Expr):
     __slots__ = ['func', 'param']
     def __init__(self, func: Lambda, param):
@@ -161,32 +142,20 @@ class FuncApp(Expr):
         self.param = Expr.new(param)
     def __repr__(self):
         return f'({repr(self.func)}) ({repr(self.param)})'
-
     def eval(self, env):
         f = self.func.eval(env)
-        v = self.param.eval(env)
-        name = f.name
-        env = copy(env)
-        env[name] = v
+        v = self.param.eval(env)  # パラメータを先に評価する
+        name = f.name # Lambda の変数名をとる
+        env = copy(env)  # 環境をコピーすることでローカルスコープを作る
+        env[name] = v   # 環境から引数を渡す
         return f.body.eval(env)
-'''
-e = FuncApp(f, Add(1, 1))
-
-print(e, '=>', e.eval({}))
-
-
-e = Block(
-    Assign('x', Val(1)),
-    Assign('y', Val(2)),
-    If(Gt(Var('x'), Var('y')), Var('x'), Var('y'))
-)
-assert e.eval ({}) == 2
-'''
 def conv(tree):
     if tree == 'Block':
         return conv(tree[0])
-    if tree == 'FuncDecl':
+    if tree == 'FuncDecl':   # この２行を追加します
         return Assign(str(tree[0]), Lambda(str(tree[1]), conv(tree[2])))
+    if tree == 'FuncApp':   # この２行を追加します
+        return FuncApp(conv(tree[0]), conv(tree[1]))
     if tree == 'If':
         return If(conv(tree[0]), conv(tree[1]), conv(tree[2]))
     if tree == 'While':
@@ -221,7 +190,6 @@ def conv(tree):
         return Assign(str(tree[0]), conv(tree[1]))
     print('@TODO', tree.tag, repr(tree))
     return Val(str(tree))
-
 def run(src: str, env: dict):
     tree = parser(src)
     if tree.isError():
@@ -230,7 +198,6 @@ def run(src: str, env: dict):
         e = conv(tree)
         #print('env', env)
         print(e.eval(env))
-
 def main():
     try:
         env = {}
@@ -241,6 +208,5 @@ def main():
             run(s, env)
     except EOFError:
         return
-
 if __name__ == '__main__':
     main()
