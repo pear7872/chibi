@@ -120,6 +120,14 @@ class If(Expr):
         else:
             return self.else_.eval(env)
 
+class Lambda(Expr):
+    __slots__ = ['name', 'body']
+    def __init__(self, name, body):
+        self.name = name
+        self.body = body
+    def __repr__(self):
+        return f'λ{}
+
 e = Block(
     Assign('x', Val(1)),
     Assign('y', Val(2)),
