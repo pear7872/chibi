@@ -12,17 +12,6 @@ Blow  = 数字が当たっている
 __________________________________
 
 """
-KIGOU = {
-        1:'A',
-        2:'B',
-        3:'C',
-        4:'D',
-        5:'E',
-        6:'F',
-        7:'G',
-        8:'H',
-        9:'I',
-}
 
 def game():
 
@@ -30,14 +19,14 @@ def game():
 
     sleep(2)
 
+    
     # 答えを作る処理
     kotae = []
     while len(kotae) != 3:
         x = random.randint(1,9)
         if x not in kotae:
             kotae.append(x)
-    
-    # 回答回数カウント
+
     count = 5
 
     # ゲームの開始処理
@@ -47,15 +36,13 @@ def game():
         B = 0
 
         # 入力処理
-        kai = input('3桁の数字を入れてください(残り' + str(count) + '回) :')
+        kai = input('記号を入れてください(残り' + str(count) + '回) :')
 
         # 入力値エラー処理
-        # 数字以外
+    
         if not kai.isdigit():
-            print('数字以外は入力できません')
-        # 3ケタ以外の場合
-        elif len(kai) != 3:
-            print('3桁のみ入力してください')
+            print('記号以外は入力できません')
+        
 
         # 入力値が正常の時の処理
         else:
